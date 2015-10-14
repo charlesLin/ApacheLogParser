@@ -19,7 +19,7 @@ namespace ApacheLogParser
 
             var parser = new DirectoryParser();
             var logs = parser.Parse(folderPath);
-            
+
             SaveToStorage(logs);
 
             //var ap = (from l in logs
@@ -30,15 +30,15 @@ namespace ApacheLogParser
             //Console.WriteLine("Avg: " + ap.Average(x => x.MicroSeconds) /1000000.0);
             sw.Stop();
             Console.WriteLine(sw.Elapsed.ToString());
-            
+
         }
 
         private static void SaveToStorage(IEnumerable<Log> logs)
         {
             var logSaver = new LogSaver("UseDevelopmentStorage=true");
-
+           
             var dic = new Dictionary<string, List<Log>>();
-            foreach (var log in logs)
+            Parallel.ForEach(logs, log =>
             {
                 List<Log> list = null;
                 if (!dic.ContainsKey(log.ResourcePath))
@@ -50,15 +50,17 @@ namespace ApacheLogParser
                 {
                     list = dic[log.ResourcePath];
                 }
-
-                if (list.Count < 100)
-                    list.Add(log);
-                else
+                lock (list)
                 {
-                    logSaver.SaveToStorageInBatch(list);
-                    list.Clear();
+                    if (list.Count < 100)
+                        list.Add(log);
+                    else
+                    {
+                        logSaver.SaveToStorageInBatch(list);
+                        list.Clear();
+                    }
                 }
-            }
+            });
 
             foreach (var key in dic.Keys)
             {
@@ -66,7 +68,7 @@ namespace ApacheLogParser
                 if (list.Count > 0)
                     logSaver.SaveToStorageInBatch(list);
             }
-            
+
         }
     }
 }
