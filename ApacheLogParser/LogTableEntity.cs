@@ -13,10 +13,10 @@ namespace ApacheLogParser
         {
         }
 
-        public LogTableEntity(DateTime dateTime)
+        public LogTableEntity(DateTime dateTime, string resourcePath)
         {
             this.DateTime = dateTime;
-            this.PartitionKey = dateTime.ToString("yyyyMMdd");
+            this.PartitionKey = resourcePath.Replace('/', '|');
             this.RowKey = dateTime.ToString("yyyyMMdd HHmmss ") + Guid.NewGuid().ToString();
         }
 

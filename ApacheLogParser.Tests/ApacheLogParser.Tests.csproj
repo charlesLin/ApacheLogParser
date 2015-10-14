@@ -102,9 +102,6 @@
     <Compile Include="Properties\PexAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="access-201510060907_2.log">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="access-201510060907.log">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

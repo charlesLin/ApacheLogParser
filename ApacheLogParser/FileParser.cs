@@ -14,7 +14,8 @@ namespace ApacheLogParser
             var lineParser = new LineParser();
             foreach (var line in File.ReadLines(filePath))
             {
-                yield return lineParser.Parse(line);
+                var log = lineParser.Parse(line);
+                if (log != null) yield return log;
             }
         } 
     }

@@ -18,7 +18,7 @@ namespace ApacheLogParser
             if (collections.Count == 0)
                 return null;
             var matchs = collections[0];
-            return new Log()
+            var log = new Log()
             {
                 ClientIp = matchs.Groups[1].Value,
                 DateTime = ParseDateTime(matchs.Groups[4].Value),
@@ -26,7 +26,16 @@ namespace ApacheLogParser
                 StatusCode = int.Parse(matchs.Groups[9].Value),
                 Bytes = GetBytes(matchs),
                 MicroSeconds = int.Parse(matchs.Groups[11].Value),
+                ResourcePath = GetResourcePath(matchs.Groups[7].Value)
             };
+            return log;
+        }
+
+        private string GetResourcePath(string value)
+        {
+            var containsQueryString = value.Contains('?');
+            if (!containsQueryString) return value;
+            else return value.Split('?')[0];
         }
 
         private static int? GetBytes(Match matchs)
@@ -54,5 +63,6 @@ namespace ApacheLogParser
         public int? Bytes { get; set; }
 
         public int MicroSeconds { get; set; }
+        public string ResourcePath { get; set; }
     }
 }
